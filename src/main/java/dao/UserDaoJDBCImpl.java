@@ -33,6 +33,10 @@ public class UserDaoJDBCImpl implements UserDao {
                     "DEFAULT CHARACTER SET = utf8;");
             util.getConnection().commit();
         } catch (SQLException e) {
+            try {
+                util.getConnection().rollback();
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -41,6 +45,10 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.execute("drop table `myschema`.`users`");
             util.getConnection().commit();
         } catch (SQLException e) {
+            try {
+                util.getConnection().rollback();
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -52,6 +60,10 @@ public class UserDaoJDBCImpl implements UserDao {
             prepareStatement.execute();
             util.getConnection().commit();
         } catch (SQLException e) {
+            try {
+                util.getConnection().rollback();
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -60,13 +72,17 @@ public class UserDaoJDBCImpl implements UserDao {
             prepareStatement.setLong(1, id);
             prepareStatement.executeUpdate();
             util.getConnection().commit();
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            try {
+                util.getConnection().rollback();
+            } catch (SQLException ignored) {
+            }
         }
     }
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        try (Statement statement = util.getConnection().createStatement();) {
+        try (Statement statement = util.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery("select * from users");
             util.getConnection().commit();
             while (resultSet.next()) {
@@ -78,15 +94,23 @@ public class UserDaoJDBCImpl implements UserDao {
                 users.add(user);
             }
         } catch (SQLException e) {
+            try {
+                util.getConnection().rollback();
+            } catch (SQLException ignored) {
+            }
         }
         return users;
     }
 
     public void cleanUsersTable() {
-        try (Statement statement = util.getConnection().createStatement();) {
+        try (Statement statement = util.getConnection().createStatement()) {
             statement.execute("delete from users");
             util.getConnection().commit();
         } catch (SQLException e) {
+            try {
+                util.getConnection().rollback();
+            } catch (SQLException ignored) {
+            }
         }
     }
 }
