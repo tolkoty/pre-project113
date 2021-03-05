@@ -1,9 +1,6 @@
 
-import model.User;
 import service.UserService;
 import service.UserServiceImpl;
-
-import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,8 +14,7 @@ public class Main {
         userService.saveUser("Дмитрий", "Медведев", (byte) 47);
         userService.saveUser("Владимир", "Путин", (byte) 68);
 
-        Stream<User> users = userService.getAllUsers().stream();
-        users.forEach(System.out::println);
+        userService.getAllUsers().forEach(System.out::println);
 
         userService.cleanUsersTable();
         userService.dropUsersTable();

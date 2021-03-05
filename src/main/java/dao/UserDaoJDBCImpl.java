@@ -15,7 +15,7 @@ public class UserDaoJDBCImpl implements UserDao {
     private static final String INSERT_NEW = "insert into users (name, lastName, age) values (?,?,?)";
     private static final String DELETE_ID = "delete from users where id=?";
 
-    Util util = new Util();
+    private final Util util = new Util();
 
     public UserDaoJDBCImpl() {
     }
@@ -31,6 +31,7 @@ public class UserDaoJDBCImpl implements UserDao {
                     "  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)\n" +
                     "ENGINE = InnoDB\n" +
                     "DEFAULT CHARACTER SET = utf8;");
+            util.getConnection().commit();
         } catch (SQLException e) {
         }
     }
@@ -38,6 +39,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public void dropUsersTable() {
         try (Statement statement = util.getConnection().createStatement()) {
             statement.execute("drop table `myschema`.`users`");
+            util.getConnection().commit();
         } catch (SQLException e) {
         }
     }
@@ -48,6 +50,7 @@ public class UserDaoJDBCImpl implements UserDao {
             prepareStatement.setString(2, lastName);
             prepareStatement.setByte(3, age);
             prepareStatement.execute();
+            util.getConnection().commit();
         } catch (SQLException e) {
         }
     }
@@ -56,6 +59,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (PreparedStatement prepareStatement = util.getConnection().prepareStatement(DELETE_ID)) {
             prepareStatement.setLong(1, id);
             prepareStatement.executeUpdate();
+            util.getConnection().commit();
         } catch (SQLException ignored) {
         }
     }
@@ -64,6 +68,7 @@ public class UserDaoJDBCImpl implements UserDao {
         List<User> users = new ArrayList<>();
         try (Statement statement = util.getConnection().createStatement();) {
             ResultSet resultSet = statement.executeQuery("select * from users");
+            util.getConnection().commit();
             while (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getLong("id"));
@@ -80,6 +85,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         try (Statement statement = util.getConnection().createStatement();) {
             statement.execute("delete from users");
+            util.getConnection().commit();
         } catch (SQLException e) {
         }
     }
